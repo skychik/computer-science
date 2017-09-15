@@ -1,11 +1,50 @@
-package ru.ifmo.cs.computer_science.lab1;
+package java.ru.ifmo.cs.computer_science.lab1;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.Scanner;
 
 public class GaussSeidelApplication {
 	private static Scanner sc = new Scanner(System.in);
+	private static Gson gson;
+
 	public static void main(String[] args) {
+		GsonBuilder gbuilder = new GsonBuilder();
+		gbuilder.serializeSpecialFloatingPointValues(); // mb needs to override
+		gson = gbuilder.create();
+//		// fill the file
+//			GaussSeidel gs;
+//			try {
+//				double[][] a = new double[1][1];
+//				a[0][0] = 0.0;
+//				double[] b = new double[1];
+//				b[0] = 0.0;
+//				gs = new GaussSeidel(a, b);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				System.exit(1);
+//				return;
+//			}
+//			String json = gson.toJson(gs);
+//			try
+//			{
+//				FileWriter gwriter = new FileWriter(System.getProperty("user.dir") + "/src/main/resources/input.txt");
+//				gwriter.write(json);
+//				gwriter.close();
+//			}
+//			catch(Exception e) {
+//				e.printStackTrace();
+//				System.exit(1);
+//				return;
+//			}
+//		//
 		double[] x;
 		if (yesNoQuestion("Do you want to enter data manually?")) {
 			x = manualInput();
@@ -18,7 +57,46 @@ public class GaussSeidelApplication {
 	}
 
 	private static double[] fileInput() {
-		return new double[0];
+		JsonReader reader;
+		try {
+			reader = new JsonReader(new FileReader(System.getProperty("user.dir") +
+					"/src/main/resources/input.txt"));
+		} catch (FileNotFoundException e1) {
+			System.out.println("File not found");
+			e1.printStackTrace();
+			System.exit(1);
+			return null;
+		}
+		GaussSeidel gs = gson.fromJson(reader, GaussSeidel.class);
+
+		outputMatrix(gs.getA(), "A");
+		outputArray(gs.getB(), "B");
+		outputArray(gs.getX0(), "First for X");
+		System.out.println("Epsilon: " + gs.getE());
+		System.out.println();
+
+		return gs.gaussSeidel();
+//		try {
+//			StringBuilder str = new StringBuilder();
+//			int c = reader.read();
+//			while (c != -1) {
+//				if (!Character.isWhitespace(c) && c != '{') {
+//					str.append(c);
+//				} else switch (str.toString().toLowerCase()) {
+//					case "a":
+//						if (a != null) {
+//							System.out.println("There should be only one A definition. Correct input file");
+//						}
+//
+//						break;
+//				}
+//				c = reader.read();
+//			}
+//		} catch (IOException e1) {
+//			System.out.println("Can't read next character");
+//			e1.printStackTrace();
+//		}
+//		return new double[0];
 	}
 
 	private static double[] manualInput() {
@@ -67,7 +145,12 @@ public class GaussSeidelApplication {
 			e = inputEpsilon();
 		}
 
-		return GaussSeidel.gaussSeidel(a, b, x0, e);
+		try {
+			return new GaussSeidel(a, b, x0, e).gaussSeidel();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return null;
+		}
 	}
 
 	private static boolean yesNoQuestion(String msg) {
