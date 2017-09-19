@@ -1,4 +1,4 @@
-package java.ru.ifmo.cs.computer_science.lab1;
+package ru.ifmo.cs.computer_science.lab1;
 
 import java.io.Serializable;
 import java.util.Objects;

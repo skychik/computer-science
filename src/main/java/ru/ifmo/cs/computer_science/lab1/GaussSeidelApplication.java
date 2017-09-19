@@ -1,4 +1,4 @@
-package java.ru.ifmo.cs.computer_science.lab1;
+package ru.ifmo.cs.computer_science.lab1;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.lang.reflect.Array;
 import java.util.Random;
 import java.util.Scanner;
+
+import static ru.ifmo.cs.computer_science.lab1.GaussSeidel.isDiagDomin;
 
 public class GaussSeidelApplication {
 	private static Scanner sc = new Scanner(System.in);
@@ -112,7 +114,7 @@ public class GaussSeidelApplication {
 			size = random.nextInt(19) + 1;
 
 			a = new double[size][size];
-			for (int i = 0; i < size; i++) {
+			for (int i = 0; i < size; i++) { // TODO: check correct randomizing
 				for (int j = 0; j < size; j++) {
 					a[i][j] = (Math.random() - 0.5) * 2000000; // between -10^6 and 10^6
 				}
@@ -128,14 +130,23 @@ public class GaussSeidelApplication {
 			b = inputArray(size, "B");
 		}
 
-		//entering x0
-		if (yesNoQuestion("Do you want to generate random default values for x?")) {
+		// entering x0
+		//     make zeros
+		if (yesNoQuestion("Do you want to make '0' as default values for x?")) {
 			x0 = new double[size];
 			for (int i = 0; i < size; i++) {
-				x0[i] = (Math.random() - 0.5) * 2000000; // between -10^6 and 10^6
+				x0[i] = 0;
 			}
 		} else {
-			x0 = inputArray(size, "X0");
+			// random x0
+			if (yesNoQuestion("Do you want to generate random default values for x?")) {
+				x0 = new double[size];
+				for (int i = 0; i < size; i++) {
+					x0[i] = (Math.random() - 0.5) * 2000000; // between -10^6 and 10^6
+				}
+			} else {
+				x0 = inputArray(size, "X0");
+			}
 		}
 
 		// entering epsilon
@@ -148,7 +159,7 @@ public class GaussSeidelApplication {
 		try {
 			return new GaussSeidel(a, b, x0, e).gaussSeidel();
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			System.out.println(e1.getMessage());
 			return null;
 		}
 	}
@@ -200,6 +211,11 @@ public class GaussSeidelApplication {
 				}
 				a[i][j] = sc.nextDouble();
 			}
+		}
+
+		if (!isDiagDomin(a)) {
+			System.out.println("Matrix A should have diagonal'noe preobladanie. Change it");
+			return inputA(size);
 		}
 
 		outputMatrix(a, "A");

@@ -1,4 +1,4 @@
-package java.ru.ifmo.cs.computer_science.lab1;
+package ru.ifmo.cs.computer_science.lab1;
 
 public class GaussSeidel {
 	private double[][] a;
@@ -14,22 +14,22 @@ public class GaussSeidel {
 		this.e = e;
 	}
 
-	public GaussSeidel(double[][] a, double[] b) throws Exception {
-		double[] x0 = new double[a.length];
-		for (int i = 0; i < a.length; i++) {
-			x0[i] = 0.0;
-		}
-		check(a, b, x0, 0);
-		this.a = a;
-		this.b = b;
-		this.x0 = x0;
-		this.e = 0;
-	}
+//	public GaussSeidel(double[][] a, double[] b) throws Exception {
+//		double[] x0 = new double[a.length];
+//		for (int i = 0; i < a.length; i++) {
+//			x0[i] = 0.0;
+//		}
+//		check(a, b, x0, 0);
+//		this.a = a;
+//		this.b = b;
+//		this.x0 = x0;
+//		this.e = 0;
+//	}
 
 	// n<=20
 	// e - точность
 	public double[] gaussSeidel() {
-		// если есть нули в главной диагонали, переставить, запомнить перераспределение иксов
+		// TODO: если есть нули в главной диагонали, переставить, запомнить перераспределение иксов
 
 		int size = a.length;
 		double[] guessX = x0.clone();
@@ -45,7 +45,7 @@ public class GaussSeidel {
 							sum += a[i][j]* guessX[j];
 						}
 					}
-					guessX[i] = (b[i] - sum)/a[i][i];
+					guessX[i] = (b[i] - sum) / a[i][i];
 				}
 			} while (!convergence(previousGuessX, guessX, e));
 		} catch (Exception e1) {
@@ -68,6 +68,54 @@ public class GaussSeidel {
 				return false;
 		}
 		return true;
+	}
+
+//	public boolean isPredominance(double[][] a) {
+//		double[][] b = new double[a.length][a.length];
+//		for (int i = 0; i < a.length; i++) {
+//			double s = 0;
+//			boolean f = false;
+//			for (double k1=-5; k1<=10; k1++) {
+//				for (double k2=-5; k2<=10; k2++) {
+//					for (double k3=-5; k3<=10; k3++) {
+//						for (double k4=-5; k4<=10; k4++) {
+//							s = 0;
+//							for (int j = 0; j < a.length; j++) {
+//								b[i][j] = k1 * a[0][j] + k2 * a[1][j] + k3 * a[2][j] + k4 * a[3][j];
+//								if (j != i)
+//									s += Math.abs(b[i][j]);
+//							}
+//							if (Math.abs(b[i][i]) > s) {
+//								k[i][0]=k1;k[i][1]=k2;k[i][2]=k3;k[i][3]=k4;
+//								f=true;
+//
+//								for (int j = 0; j < a.length; j++) {
+//									cout<<b[i][j]<<"\t";
+//								}
+//								cout<<endl;
+//								break;
+//							}
+//						}
+//						if (f) break;
+//					}
+//					if (f) break;
+//				}
+//				if (f) break;
+//			}
+//		}
+//	}
+
+	public static boolean isDiagDomin(double[][] a) {
+		for (int i = 0; i < a.length; i++) {
+			double sum = 0;
+			for (int j = 0; j < a.length; j++) {
+				sum += Math.abs(a[i][j]);
+			}
+			if (Math.abs(a[i][i]) < Math.abs(sum-Math.abs(a[i][i]))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public double[][] getA() {
