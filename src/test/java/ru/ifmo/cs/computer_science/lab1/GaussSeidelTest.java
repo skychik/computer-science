@@ -1,6 +1,7 @@
 package ru.ifmo.cs.computer_science.lab1;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GaussSeidelTest {
-	private ArrayList<Pair> log = new ArrayList<>();
+/*	private ArrayList<Pair> log = new ArrayList<>();
 	FileInputStream is;
 	FileOutputStream os;
 
@@ -96,10 +97,98 @@ class GaussSeidelTest {
 		} catch (IOException e) {
 			log.add(new Pair(e, "Can't close input or output in making input.txt back"));
 		}
+	}*/
+
+	@Test
+	void gaussSeidel1() {
+		int testNumber = 1;
+		System.out.println("test" + testNumber + ":");
+		double[][] a = {{ 5.0, 1.0, 1.0},
+						{ 1.0, 5.0, 1.0},
+						{ 1.0, 1.0, 5.0}};
+		double[] b = {7.0, 7.0, 7.0};
+		double[] x0 = {1.4, 1.4, 1.4};
+		double e = 0.0001;
+		GaussSeidel gs;
+		try {
+			gs = new GaussSeidel(a, b, x0, e);
+		} catch (Exception e1) {
+			System.out.println("Incorrect test" + testNumber + e1.getMessage());
+			return;
+		}
+		double[] expected = {1.0, 1.0, 1.0};
+
+		double[] answer = gs.gaussSeidel();
+		// output answer
+		GaussSeidelApplication.outputArray(answer, "Answer");
+
+		double minDelta = 0.0;
+		for (int i = 0; i < a.length; i++) {
+			double abs = Math.abs(expected[i] - answer[i]);
+			if (abs > minDelta) minDelta = abs;
+		}
+		assertTrue(minDelta < e, "Incorrect answer" + testNumber);
+	}
+
+	@Ignore
+	@Test
+	void gaussSeidel2() {
+		int testNumber = 2;
+		System.out.println("test" + testNumber + ":");
+		double[][] a = {{ 1.53, -1.63, -0.76},
+						{ 0.86,  1.17,  1.84},
+						{ 0.32, -0.65,  1.11}};
+		double[] b = {2.18, 1.95, -0.47};
+		double[] x0 = {0.0, 0.0, 0.0};
+		double e = 0.0001;
+		GaussSeidel gs;
+		try {
+			gs = new GaussSeidel(a, b, x0, e);
+		} catch (Exception e1) {
+			System.out.println("Incorrect test" + testNumber + e1.getMessage());
+			return;
+		}
+		double[] expected = {1.0, 1.0, 1.0};
+
+		double[] answer = gs.gaussSeidel();
+		GaussSeidelApplication.outputArray(answer, "Answer");
+
+		double minDelta = 0.0;
+		for (int i = 0; i < a.length; i++) {
+			double abs = Math.abs(expected[i] - answer[i]);
+			if (abs > minDelta) minDelta = abs;
+		}
+		assertTrue(minDelta < e, "Incorrect answer" + testNumber);
 	}
 
 	@Test
-	void gaussSeidel() {
+	void gaussSeidel3() {
+		int testNumber = 3;
+		System.out.println("test" + testNumber + ":");
+		double[][] a = {{ 15.0, 3.0,  4.0,  5.0},
+						{ 2.0,  16.0, 4.0,  5.0},
+						{ 2.0,  3.0,  17.0, 5.0},
+						{ 2.0,  3.0,  4.0,  18.0},};
+		double[] b = {13.0, -1.0, 17.0, -50.0};
+		double[] x0 = {0.0, 0.0, 0.0, 0.0};
+		double e = 0.0001;
+		GaussSeidel gs;
+		try {
+			gs = new GaussSeidel(a, b, x0, e);
+		} catch (Exception e1) {
+			System.out.println("Incorrect test" + testNumber + e1.getMessage());
+			return;
+		}
+		double[] expected = {1.0, 1.0, 1.0};
 
+		double[] answer = gs.gaussSeidel();
+		GaussSeidelApplication.outputArray(answer, "Answer");
+
+		double minDelta = 0.0;
+		for (int i = 0; i < a.length; i++) {
+			double abs = Math.abs(expected[i] - answer[i]);
+			if (abs > minDelta) minDelta = abs;
+		}
+		assertTrue(minDelta < e, "Incorrect answer" + testNumber);
 	}
 }

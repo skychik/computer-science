@@ -2,14 +2,15 @@ package ru.ifmo.cs.computer_science.lab1;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedHashTreeMap;
 import com.google.gson.stream.JsonReader;
+import javafx.collections.transformation.SortedList;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Array;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 import static ru.ifmo.cs.computer_science.lab1.GaussSeidel.isDiagDomin;
 
@@ -69,7 +70,14 @@ public class GaussSeidelApplication {
 			System.exit(1);
 			return null;
 		}
-		GaussSeidel gs = gson.fromJson(reader, GaussSeidel.class);
+
+		GaussSeidel gs;
+		try {
+			gs = gson.fromJson(reader, GaussSeidel.class);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
 
 		outputMatrix(gs.getA(), "A");
 		outputArray(gs.getB(), "B");
@@ -113,12 +121,7 @@ public class GaussSeidelApplication {
 		if (yesNoQuestion("Do you want to generate random size and indexes for A and B?")) {
 			size = random.nextInt(19) + 1;
 
-			a = new double[size][size];
-			for (int i = 0; i < size; i++) { // TODO: check correct randomizing
-				for (int j = 0; j < size; j++) {
-					a[i][j] = (Math.random() - 0.5) * 2000000; // between -10^6 and 10^6
-				}
-			}
+			a = makeRandomDiagDominMatrix(size);
 
 			b = new double[size];
 			for (int i = 0; i < size; i++) {
@@ -162,6 +165,23 @@ public class GaussSeidelApplication {
 			System.out.println(e1.getMessage());
 			return null;
 		}
+	}
+
+	private static double[][] makeRandomDiagDominMatrix(int size) {
+		double[][] matrix = new double[size][size];
+		for (int i = 0; i < size; i++) {
+			LinkedList<Double> list = new LinkedList<>();
+			for (int j = 0; j < size; j++) {
+				list.add((Math.random() - 0.5) * 2000000); // between -10^6 and 10^6
+			}
+
+			// sort
+			list.sort((x1, x2) -> x1 > x2 ? 1 : (Objects.equals(x1, x2) ? 0 : -1));
+			for (int j = 0; j < size; j++) {
+				matrix[i][(i + j) % size] = list.removeFirst();
+			}
+		}
+		return matrix;
 	}
 
 	private static boolean yesNoQuestion(String msg) {
@@ -251,7 +271,7 @@ public class GaussSeidelApplication {
 		return epsilon;
 	}
 
-	private static void outputArray(double[] array, String arrayName) {
+	public static void outputArray(double[] array, String arrayName) {
 		System.out.println(arrayName + ":");
 		for (int i = 0; i < array.length; i++) {
 			System.out.print(array[i]);

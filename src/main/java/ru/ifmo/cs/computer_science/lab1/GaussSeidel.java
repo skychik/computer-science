@@ -37,7 +37,7 @@ public class GaussSeidel {
 
 		try {
 			do {
-				previousGuessX = guessX;
+				previousGuessX = guessX.clone();
 				for (int i = 0; i < size; i++) {
 					double sum = 0.0;
 					for (int j = 0; j < size; j++) {
@@ -47,6 +47,7 @@ public class GaussSeidel {
 					}
 					guessX[i] = (b[i] - sum) / a[i][i];
 				}
+				//GaussSeidelApplication.outputArray(guessX, "X");
 			} while (!convergence(previousGuessX, guessX, e));
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -57,12 +58,25 @@ public class GaussSeidel {
 	}
 
 	private void check(double[][] a, double[] b, double[] x0, double e) throws Exception {
-		if (a.length != b.length || b.length != x0.length || a.length > 20 ||  e < 0.0)
-			throw new Exception("Wrong arguments");
+		if (a.length != b.length) {
+			throw new Exception("Wrong arguments: length of A != length of B");
+		}
+		if (b.length != x0.length) {
+			throw new Exception("Wrong arguments: length of B != length of X0");
+		}
+		if (a.length > 20) {
+			throw new Exception("Wrong arguments: length of A > 20");
+		}
+		if (e <= 0.0) {
+			throw new Exception("Wrong arguments: e <= 0");
+		}
+		if (!isDiagDomin(a)) {
+			throw new Exception("Wrong arguments: A doesn't have diagonal'noe preobladanie");
+		}
 	}
 
 	private boolean convergence(double[] previousGuessX, double[] guessX, double e) throws Exception {
-		if (previousGuessX.length != guessX.length) throw new Exception();
+		if (previousGuessX.length != guessX.length) throw new Exception("in convergence");
 		for (int i = 0; i < guessX.length; i++) {
 			if (Math.abs(guessX[i] - previousGuessX[i]) > e)
 				return false;
@@ -112,10 +126,10 @@ public class GaussSeidel {
 				sum += Math.abs(a[i][j]);
 			}
 			if (Math.abs(a[i][i]) < Math.abs(sum-Math.abs(a[i][i]))) {
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	public double[][] getA() {
