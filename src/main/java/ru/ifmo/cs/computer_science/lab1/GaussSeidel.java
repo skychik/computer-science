@@ -29,8 +29,6 @@ public class GaussSeidel {
 	// n<=20
 	// e - точность
 	public double[] gaussSeidel() {
-		// TODO: если есть нули в главной диагонали, переставить, запомнить перераспределение иксов
-
 		int size = a.length;
 		double[] guessX = x0.clone();
 		double[] previousGuessX;
@@ -59,19 +57,23 @@ public class GaussSeidel {
 
 	private void check(double[][] a, double[] b, double[] x0, double e) throws Exception {
 		if (a.length != b.length) {
-			throw new Exception("Wrong arguments: length of A != length of B");
+			throw new Exception("Wrong arguments: length of 'A' != length of 'B'");
 		}
 		if (b.length != x0.length) {
-			throw new Exception("Wrong arguments: length of B != length of X0");
+			throw new Exception("Wrong arguments: length of 'B' != length of X0");
 		}
 		if (a.length > 20) {
-			throw new Exception("Wrong arguments: length of A > 20");
+			throw new Exception("Wrong arguments: length of 'A' > 20");
 		}
 		if (e <= 0.0) {
 			throw new Exception("Wrong arguments: e <= 0");
 		}
 		if (!isDiagDomin(a)) {
-			throw new Exception("Wrong arguments: A doesn't have diagonal'noe preobladanie");
+			if (hasOpportunityToDiagDomin(a)) {
+				throw new Exception("Wrong arguments: change 'A' so it has diagonal'noe preobladanie");
+			} else {
+				throw new Exception("Wrong arguments: can't make 'A' with diagonal'noe preobladanie");
+			}
 		}
 	}
 
@@ -120,6 +122,10 @@ public class GaussSeidel {
 //	}
 
 	public static boolean isDiagDomin(double[][] a) {
+		if (a.length != a[0].length) {
+			throw new IllegalArgumentException("isn't square matrix");
+		}
+
 		for (int i = 0; i < a.length; i++) {
 			double sum = 0;
 			for (int j = 0; j < a.length; j++) {
@@ -130,6 +136,47 @@ public class GaussSeidel {
 			}
 		}
 		return true;
+	}
+
+	public static boolean hasOpportunityToDiagDomin(double[][] a) throws Exception {
+		if (a.length != a[0].length) {
+			throw new Exception("isn't square matrix");
+		}
+
+		boolean[][] whichCanBeDiagElems = new boolean[a.length][a.length];
+
+		for (int i = 0; i < a.length; i++) {
+			double sum = 0.0;
+			double maxAbs = 0.0;
+			for (int j = 0; j < a.length; j++) {
+				sum += Math.abs(a[i][j]);
+			}
+			for (int j = 0; j < a.length; j++) {
+				whichCanBeDiagElems[i][j] = sum - Math.abs(a[i][j]) <= Math.abs(a[i][j]);
+			}
+		}
+
+		boolean[] paintedColumns = new boolean[a.length];
+		for (int i = 0; i < a.length; i++) {
+				paintedColumns[i] = false;
+		}
+		return isAbleToPutOnesOnMainDiag(whichCanBeDiagElems, paintedColumns, -1);
+	}
+
+	private static boolean isAbleToPutOnesOnMainDiag(boolean[][] a, boolean[] paintedColumns, int previouslyChosenRow) {
+		if (previouslyChosenRow + 1 == a.length) {
+			return true;
+		}
+
+		for (int j = 1; j < a.length; j++) {
+			if (a[previouslyChosenRow + 1][j] && !paintedColumns[j]) {
+				paintedColumns[j] = true;
+				if (!isAbleToPutOnesOnMainDiag(a, paintedColumns, previouslyChosenRow + 1)) {
+					paintedColumns[j] = false;
+				} else return true;
+			}
+		}
+		return false;
 	}
 
 	public double[][] getA() {
