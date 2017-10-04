@@ -2,15 +2,14 @@ package ru.ifmo.cs.computer_science.lab1;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.internal.LinkedHashTreeMap;
 import com.google.gson.stream.JsonReader;
-import javafx.collections.transformation.SortedList;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Scanner;
 
 import static ru.ifmo.cs.computer_science.lab1.GaussSeidel.isDiagDomin;
 

@@ -1,19 +1,9 @@
 package ru.ifmo.cs.computer_science.lab1;
 
-import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.SchemaOutputResolver;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GaussSeidelTest {
 /*	private ArrayList<Pair> log = new ArrayList<>();
