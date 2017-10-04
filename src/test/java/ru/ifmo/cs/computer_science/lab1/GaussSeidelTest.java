@@ -136,7 +136,7 @@ class GaussSeidelTest {
 	}
 
 	private void doGaussSeidelTesting(int testNumber, double[][] a, double[] b, double[] x0, double e, double[] expected) {
-		System.out.println("test" + testNumber + ":");
+		System.out.println("\nTest" + testNumber + ":");
 		GaussSeidel gs;
 		try {
 			gs = new GaussSeidel(a, b, x0, e);
@@ -145,7 +145,7 @@ class GaussSeidelTest {
 			return;
 		}
 
-		double[] answer = gs.gaussSeidel();
+		double[] answer = gs.getAnswer();
 		GaussSeidelApplication.outputArray(answer, "Answer");
 
 		double minDelta = 0.0;
@@ -155,6 +155,8 @@ class GaussSeidelTest {
 		}
 
 		assertTrue(minDelta < e, "Incorrect answer" + testNumber);
-		System.out.println("Test " + testNumber + ": " + (minDelta < e));
+		if (minDelta < e) System.out.println("works correctly");
+			else System.out.println("!!!works incorrectly!!!");
+		System.out.println("Number of iterations: " + gs.getIterationNumber());
 	}
 }

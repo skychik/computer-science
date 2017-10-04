@@ -47,18 +47,21 @@ public class GaussSeidelApplication {
 //				return;
 //			}
 //		//
-		double[] x;
+		GaussSeidel gs;
 		if (yesNoQuestion("Do you want to enter data manually?")) {
-			x = manualInput();
+			gs = manualInput();
 		} else {
-			x = fileInput();
+			gs = fileInput();
 		}
 
 		// output answer
-		outputArray(x, "X");
+		if (gs != null) {
+			System.out.println("Number of iterations: " + gs.getIterationNumber());
+			outputArray(gs.getAnswer(), "X");
+		}
 	}
 
-	private static double[] fileInput() {
+	private static GaussSeidel fileInput() {
 		JsonReader reader;
 		try {
 			reader = new JsonReader(new FileReader(System.getProperty("user.dir") +
@@ -84,7 +87,7 @@ public class GaussSeidelApplication {
 		System.out.println("Epsilon: " + gs.getE());
 		System.out.println();
 
-		return gs.gaussSeidel();
+		return gs;
 //		try {
 //			StringBuilder str = new StringBuilder();
 //			int c = reader.read();
@@ -108,7 +111,7 @@ public class GaussSeidelApplication {
 //		return new double[0];
 	}
 
-	private static double[] manualInput() {
+	private static GaussSeidel manualInput() {
 		int size;
 		double[][] a;
 		double[] b;
@@ -159,7 +162,7 @@ public class GaussSeidelApplication {
 		}
 
 		try {
-			return new GaussSeidel(a, b, x0, e).gaussSeidel();
+			return new GaussSeidel(a, b, x0, e);
 		} catch (Exception e1) {
 			System.out.println(e1.getMessage());
 			return null;

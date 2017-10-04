@@ -5,6 +5,8 @@ public class GaussSeidel {
 	private double[] b;
 	private double[] x0;
 	private double e;
+	private int iterationNumber;
+	private double[] answer;
 
 	public GaussSeidel(double[][] a, double[] b, double[] x0, double e) throws Exception {
 		check(a, b, x0, e);
@@ -12,6 +14,8 @@ public class GaussSeidel {
 		this.b = b;
 		this.x0 = x0;
 		this.e = e;
+
+		doGaussSeidel();
 	}
 
 //	public GaussSeidel(double[][] a, double[] b) throws Exception {
@@ -26,33 +30,38 @@ public class GaussSeidel {
 //		this.e = 0;
 //	}
 
+	public double[] getAnswer() {
+		return answer;
+	}
+
 	// n<=20
 	// e - точность
-	public double[] gaussSeidel() {
+	private void doGaussSeidel() throws Exception{
 		int size = a.length;
 		double[] guessX = x0.clone();
 		double[] previousGuessX;
+		iterationNumber = 0;
 
-		try {
-			do {
-				previousGuessX = guessX.clone();
-				for (int i = 0; i < size; i++) {
-					double sum = 0.0;
-					for (int j = 0; j < size; j++) {
-						if (i != j) {
-							sum += a[i][j]* guessX[j];
-						}
+		do {
+			iterationNumber++;
+			previousGuessX = guessX.clone();
+			for (int i = 0; i < size; i++) {
+				double sum = 0.0;
+				for (int j = 0; j < size; j++) {
+					if (i != j) {
+						sum += a[i][j]* guessX[j];
 					}
-					guessX[i] = (b[i] - sum) / a[i][i];
 				}
-				//GaussSeidelApplication.outputArray(guessX, "X");
-			} while (!convergence(previousGuessX, guessX, e));
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			return null;
-		}
+				guessX[i] = (b[i] - sum) / a[i][i];
+			}
+			//GaussSeidelApplication.outputArray(guessX, "X");
+		} while (!convergence(previousGuessX, guessX, e));
 
-		return guessX.clone();
+		answer = guessX;
+	}
+
+	public int getIterationNumber() {
+		return iterationNumber;
 	}
 
 	private void check(double[][] a, double[] b, double[] x0, double e) throws Exception {
