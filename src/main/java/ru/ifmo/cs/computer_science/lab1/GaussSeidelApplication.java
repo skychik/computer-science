@@ -3,6 +3,7 @@ package ru.ifmo.cs.computer_science.lab1;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import ru.ifmo.cs.computer_science.lab1.utils.GaussSeidel;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -11,7 +12,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
-import static ru.ifmo.cs.computer_science.lab1.GaussSeidel.isDiagDomin;
+import static ru.ifmo.cs.computer_science.lab1.utils.GaussSeidel.isDiagDomin;
 
 public class GaussSeidelApplication {
 	private static Scanner sc = new Scanner(System.in);
@@ -284,8 +285,8 @@ public class GaussSeidelApplication {
 		System.out.println();
 	}
 
-	private static void outputMatrix(double[][] matrix, String arrayName) {
-		System.out.println(arrayName + ":");
+	public static void outputMatrix(double[][] matrix, String matrixName) {
+		System.out.println(matrixName + ":");
 		for (int i = 0; i < matrix.length; i++) {
 			for (int j = 0; j < matrix.length; j++) {
 				System.out.print(matrix[i][j]);

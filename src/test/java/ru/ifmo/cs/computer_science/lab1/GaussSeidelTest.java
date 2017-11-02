@@ -2,6 +2,7 @@ package ru.ifmo.cs.computer_science.lab1;
 
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
+import ru.ifmo.cs.computer_science.lab1.utils.GaussSeidel;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

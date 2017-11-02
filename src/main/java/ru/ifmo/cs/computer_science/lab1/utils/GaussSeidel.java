@@ -1,4 +1,4 @@
-package ru.ifmo.cs.computer_science.lab1;
+package ru.ifmo.cs.computer_science.lab1.utils;
 
 public class GaussSeidel {
 	private double[][] a;

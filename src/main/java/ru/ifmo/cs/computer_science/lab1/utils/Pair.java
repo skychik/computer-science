@@ -1,13 +1,13 @@
-package ru.ifmo.cs.computer_science.lab1;
+package ru.ifmo.cs.computer_science.lab1.utils;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Pair implements Serializable {
-	private Exception first;
-	private String second;
+public class Pair<A, B> implements Serializable {
+	private A first;
+	private B second;
 
-	Pair(Exception first, String second) {
+	public Pair(A first, B second) {
 		super();
 		this.first = first;
 		this.second = second;
@@ -58,11 +58,11 @@ public class Pair implements Serializable {
 		return "(" + first + ", " + second + ")";
 	}
 
-	public Exception getFirst() {
+	public A getFirst() {
 		return first;
 	}
 
-	public String getSecond() {
+	public B getSecond() {
 		return second;
 	}
 }
