@@ -1,31 +1,31 @@
 package ru.ifmo.cs.computer_science.lab2;
 
-import ru.ifmo.cs.computer_science.lab1.utils.Pair;
-import ru.ifmo.cs.computer_science.lab2.utils.DefiniteIntegral;
-import ru.ifmo.cs.computer_science.lab2.utils.SimpsonFunctionBuilder;
-import ru.ifmo.cs.computer_science.lab2.utils.YXFunction;
+import ru.ifmo.cs.computer_science.lab2.utils.DefinedIntegralSimpsonMethod;
+import ru.ifmo.cs.computer_science.lab2.utils.YXFunctionWithNameAndRelativePath;
 
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import static java.awt.GridBagConstraints.REMAINDER;
+
 public class SimpsonApplication {
-	private static ArrayList<Pair<YXFunction, String>> functionsAndPhotos;
-	private static SimpsonFunctionBuilder builder = new SimpsonFunctionBuilder();
-	private static Pair<YXFunction, String> selectedFunction;
+	private static ArrayList<YXFunctionWithNameAndRelativePath> YXFunctionsWithNamesAndRelativePaths;
+	private static YXFunctionWithNameAndRelativePath selectedFunction;
 	private static JFrame frame;
 	private static JFormattedTextField epsilon;
 	private static JFormattedTextField higherLimit;
 	private static JFormattedTextField lowerLimit;
 
+	private static Dimension frameSize = new Dimension(450, 200);
+
 	public static void main(String[] args) {
-		initFunctionsAndPhotos();
+		initYXFunctionsWithNamesAndRelativePaths();
 
 		//GUI
 		SwingUtilities.invokeLater(SimpsonApplication::gui);
@@ -47,7 +47,6 @@ public class SimpsonApplication {
 
 		createContentPane(frame);
 
-		Dimension frameSize = new Dimension(450, 200);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int locationX = (screenSize.width - frameSize.width) / 2;
 		int locationY = (screenSize.height - frameSize.height) / 2;
@@ -80,10 +79,11 @@ public class SimpsonApplication {
 
 	private static void addAllFunctions(Container container) {
 		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.weightx = 1;
 		ButtonGroup buttonGroup = new ButtonGroup();
-		JRadioButton[] buttons = new JRadioButton[getFunctionsAndPhotos().size()];
-		for (int i = 0; i < getFunctionsAndPhotos().size(); i++) {
-			Pair<YXFunction, String> functionAndPhoto = getFunctionsAndPhotos().get(i);
+		JRadioButton[] buttons = new JRadioButton[getYXFunctionsWithNamesAndRelativePaths().size()];
+		for (int i = 0; i < getYXFunctionsWithNamesAndRelativePaths().size(); i++) {
+			YXFunctionWithNameAndRelativePath functionAndPhoto = getYXFunctionsWithNamesAndRelativePaths().get(i);
 
 			// Add photo of radio button
 			constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -91,12 +91,12 @@ public class SimpsonApplication {
 			constraints.gridy = 0;
 
 			container.add(new JLabel(new ImageIcon(System.getProperty("user.dir") +
-							"/src/main/java/ru/ifmo/cs/computer_science/lab2/formula_photos/" +
-							functionAndPhoto.getSecond())),
+							"/src/main/resources/lab2/formula_photos/" +
+							functionAndPhoto.getRelativePath())),
 					constraints);
 
 			// Add radio button
-			buttons[i] = new JRadioButton(functionAndPhoto.getSecond());
+			buttons[i] = new JRadioButton(functionAndPhoto.getName());
 			buttonGroup.add(buttons[i]);
 			buttons[i].addChangeListener(e -> {
 				if (((JRadioButton) e.getSource()).getModel().isPressed()) {
@@ -107,6 +107,7 @@ public class SimpsonApplication {
 			constraints.fill = GridBagConstraints.HORIZONTAL;
 			constraints.gridx = i;
 			constraints.gridy = 1;
+			//constraints.anchor = SwingConstants.CENTER;
 
 			container.add(buttons[i], constraints);
 		}
@@ -201,16 +202,17 @@ public class SimpsonApplication {
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.gridx = GridBagConstraints.RELATIVE;
 		constraints.gridy = 5;
-		constraints.gridwidth = 1000; // just a big number
+		constraints.gridwidth = REMAINDER; // на всю ширину
 
 		JButton button = new JButton("Calculate the definite integral");
 		button.addActionListener(e -> {
 			try {
-				if (selectedFunction == null) throw new IOException("Choose function");
+				if (selectedFunction == null) throw new IllegalArgumentException("Choose function");
 				//if ((float) epsilon.getValue() <= 0.0f) throw new IOException("epsilon should be > 0");
-				DefiniteIntegral integral = new DefiniteIntegral(builder.buildFunction(selectedFunction.getFirst()),
+				DefinedIntegralSimpsonMethod integral = new DefinedIntegralSimpsonMethod(selectedFunction.getFunction(),
 						((Number) lowerLimit.getValue()).doubleValue(), ((Number) higherLimit.getValue()).doubleValue(),
 						((Number) epsilon.getValue()).doubleValue());
+				integral.integrate();
 				JTextArea answer = new JTextArea();
 				answer.setOpaque(false);
 //				answer.append("function = " + selectedFunction.getSecond() + '\n');
@@ -218,13 +220,13 @@ public class SimpsonApplication {
 //				answer.append("higher limit = " + ((Number) higherLimit.getValue()).doubleValue() + '\n');
 //				answer.append("expected epsilon = " + ((Number) epsilon.getValue()).doubleValue() + '\n');
 				answer.append("----Answer:----\n");
-				answer.append("integral = " + integral.getDefiniteIntegral() + '\n');
+				answer.append("integral = " + integral.getDefinedIntegral() + '\n');
 				answer.append("number of splits = " + integral.getNumberOfSplits() + '\n');
 				answer.append("epsilon = " + integral.getRungeEpsilon());
 				// Show answer
 				JOptionPane.showMessageDialog(frame, answer, "Answer",
 						JOptionPane.INFORMATION_MESSAGE);
-			} catch (IOException e1) {
+			} catch (IllegalArgumentException e1) {
 				// Show answer
 				JOptionPane.showMessageDialog(frame, new JLabel(e1.getMessage()), "Answer",
 						JOptionPane.ERROR_MESSAGE);
@@ -234,21 +236,21 @@ public class SimpsonApplication {
 		container.add(button,constraints);
 	}
 
-	private static void initFunctionsAndPhotos() {
-		functionsAndPhotos = new ArrayList<>();
-		functionsAndPhotos.add(new Pair<>((double x) -> x / (Math.pow(x, 4) + 4),
-				"func1.png"));
-		functionsAndPhotos.add(new Pair<>((double x) -> x,
-				"func2.png"));
-		functionsAndPhotos.add(new Pair<>(Math::sin,
-				"func3.png"));
-		functionsAndPhotos.add(new Pair<>((double x) -> Math.exp(x) / x,
-				"func4.png"));
-		functionsAndPhotos.add(new Pair<>((double x) -> Math.atan(x) / x,
-				"func5.png"));
+	private static void initYXFunctionsWithNamesAndRelativePaths() {
+		YXFunctionsWithNamesAndRelativePaths = new ArrayList<>();
+		YXFunctionsWithNamesAndRelativePaths.add(new YXFunctionWithNameAndRelativePath((double x) -> x / (Math.pow(x, 4) + 4),
+				"x/(x^4+4)", "func1.png"));
+		YXFunctionsWithNamesAndRelativePaths.add(new YXFunctionWithNameAndRelativePath((double x) -> x,
+				"x", "func2.png"));
+		YXFunctionsWithNamesAndRelativePaths.add(new YXFunctionWithNameAndRelativePath(Math::sin,
+				"sin(x)", "func3.png"));
+		YXFunctionsWithNamesAndRelativePaths.add(new YXFunctionWithNameAndRelativePath((double x) -> Math.exp(x) / x,
+				"e^x/x", "func4.png"));
+		YXFunctionsWithNamesAndRelativePaths.add(new YXFunctionWithNameAndRelativePath((double x) -> Math.atan(x) / x,
+				"arctg(x)/x", "func5.png"));
 	}
 
-	private static ArrayList<Pair<YXFunction, String>> getFunctionsAndPhotos() {
-		return functionsAndPhotos;
+	private static ArrayList<YXFunctionWithNameAndRelativePath> getYXFunctionsWithNamesAndRelativePaths() {
+		return YXFunctionsWithNamesAndRelativePaths;
 	}
 }
