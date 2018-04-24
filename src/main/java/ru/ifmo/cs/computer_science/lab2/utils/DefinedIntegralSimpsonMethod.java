@@ -29,8 +29,7 @@ public class DefinedIntegralSimpsonMethod {
 		this.epsilon = epsilon;
 	}
 
-	public void integrate()
-			throws IllegalArgumentException {
+	public void integrate() throws IllegalArgumentException {
 		double previousIntegral;
 		numberOfSplits = 1;
 		definedIntegral = getDefinedIntegral(numberOfSplits);
@@ -42,7 +41,7 @@ public class DefinedIntegralSimpsonMethod {
 		} while (rungeEpsilon > epsilon);
 	}
 
-	public double getDefinedIntegral(int n) throws IllegalArgumentException {
+	private double getDefinedIntegral(int n) throws IllegalArgumentException {
 		if (n < 1) throw new IllegalArgumentException("n should be >= 1");
 		if (!Double.isFinite(lowLimit)) throw new IllegalArgumentException("lower limit should be a real number");
 		if (!Double.isFinite(highLimit)) throw new IllegalArgumentException("higher limit should be a real number");

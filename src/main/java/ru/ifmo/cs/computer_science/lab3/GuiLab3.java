@@ -12,9 +12,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 import static java.awt.GridBagConstraints.REMAINDER;
@@ -184,7 +186,7 @@ public class GuiLab3 extends JFrame {
 		constraints.gridx = 0;
 		constraints.gridy = 3;
 
-		container.add(new JLabel("x of unknown point:"), constraints);
+		container.add(new JLabel("x0:"), constraints);
 
 		constraints.gridx = 1;
 
@@ -217,19 +219,25 @@ public class GuiLab3 extends JFrame {
 
 		JButton makeGraphicButton = new JButton("Make graphic"); // TODO: graphic as internal frame
 		makeGraphicButton.addActionListener(e -> {
-			double[] xCoordinates = new double[table.getRowCount()];
-			double[] yCoordinates = new double[table.getRowCount()];
-			for (int i = 0; i < table.getModel().getRowCount(); i++) {
-				xCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 0).toString());
-				yCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 1).toString());
-			}
-			MyGraphic graphic = new MyGraphic("Graphic", xCoordinates, yCoordinates,
-					selectedFunction.getFunction(), selectedX);
-			graphic.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			if (table.getRowCount() == 0) {
+				// Show answer
+				JOptionPane.showMessageDialog(frame, new JLabel("Add points"), "Answer",
+						JOptionPane.ERROR_MESSAGE);
+			} else {
+				double[] xCoordinates = new double[table.getRowCount()];
+				double[] yCoordinates = new double[table.getRowCount()];
+				for (int i = 0; i < table.getModel().getRowCount(); i++) {
+					xCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 0).toString());
+					yCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 1).toString());
+				}
+				MyGraphic graphic = new MyGraphic("Graphic", xCoordinates, yCoordinates,
+						selectedFunction.getFunction(), selectedX);
+				graphic.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-			graphic.pack();
-			RefineryUtilities.centerFrameOnScreen(graphic);
-			graphic.setVisible(true);
+				graphic.pack();
+				RefineryUtilities.centerFrameOnScreen(graphic);
+				graphic.setVisible(true);
+			}
 		});
 
 		container.add(makeGraphicButton, constraints);

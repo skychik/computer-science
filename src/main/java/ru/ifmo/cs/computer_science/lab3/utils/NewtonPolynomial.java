@@ -4,7 +4,6 @@ import ru.ifmo.cs.computer_science.lab1.utils.Pair;
 import ru.ifmo.cs.computer_science.lab2.utils.YXFunction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,23 +32,26 @@ public class NewtonPolynomial implements YXFunction {
 	}
 
 	@Override
+	// y(x)= sum(ai*multiply(x-xj)), 0 <= i < length; 0 <= j < i - 1
 	public double getY(double x) {
-		double ans = 0;
+		double y = 0;
 		for (int i = 0; i < length; i++) {
-			double part = f(0, i);
+			double part = a(0, i);
 			for (int j = 0; j <= i - 1; j++) {
 				part *= x - xCoordinates[j];
 			}
-			ans += part;
+			y += part;
 		}
-		return ans;
+		return y;
 	}
 
-	private double f(int beginIndex, int endIndex) {
+	// разделенная разница a(xn, xk) = (a(xk, xn+1) - a(xk-1, xn)) / (xk - xn)
+	private double a(int beginIndex, int endIndex) {
 		if (beginIndex == endIndex) return yCoordinates[beginIndex];
-		if (endIndex - beginIndex == 1) return (yCoordinates[endIndex] - yCoordinates[beginIndex]) /
-				(xCoordinates[endIndex] - xCoordinates[beginIndex]);
-		return (f(beginIndex + 1, endIndex) - f(beginIndex, endIndex - 1)) /
+		if (endIndex - beginIndex == 1)
+			return (yCoordinates[endIndex] - yCoordinates[beginIndex]) /
+					(xCoordinates[endIndex] - xCoordinates[beginIndex]);
+		return (a(beginIndex + 1, endIndex) - a(beginIndex, endIndex - 1)) /
 				(xCoordinates[endIndex] - xCoordinates[beginIndex]);
 	}
 }
