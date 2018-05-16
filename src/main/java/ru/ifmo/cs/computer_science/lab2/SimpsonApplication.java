@@ -1,20 +1,9 @@
 package ru.ifmo.cs.computer_science.lab2;
 
-import ru.ifmo.cs.computer_science.lab2.utils.DefinedIntegralSimpsonMethod;
 import ru.ifmo.cs.computer_science.lab2.utils.YXFunctionWithNameAndRelativePath;
-import ru.ifmo.cs.computer_science.lab3.GuiLab3;
-import ru.ifmo.cs.computer_science.lab3.NewtonPolynomialApp;
 
 import javax.swing.*;
-import javax.swing.text.NumberFormatter;
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-
-import static java.awt.GridBagConstraints.REMAINDER;
 
 public class SimpsonApplication {
 

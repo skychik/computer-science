@@ -12,31 +12,31 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
+import ru.ifmo.cs.computer_science.lab4.utils.Point;
 
 import static java.awt.GridBagConstraints.REMAINDER;
 
-public class GuiLab3 extends JFrame {
+class GuiLab3 {
 	private static ArrayList<YXFunctionWithNameAndRelativePath> YXFunctionsWithNamesAndRelativePaths;
 	private static ArrayList<YXFunctionWithNameAndRelativePath> getYXFunctionsWithNamesAndRelativePaths() {
 		return YXFunctionsWithNamesAndRelativePaths;
 	}
 
+	private static JFrame frame;
 	private static Dimension frameSize = new Dimension(450, 200);
 	private static YXFunctionWithNameAndRelativePath selectedFunction;
 	private static double selectedX;
-	private static JFrame frame;
 	private static JTable table;
 	private static DefaultTableModel tableModel;
 	private static JFormattedTextField inputXForTableField;
 	private static JFormattedTextField setXField;
 
-	public static void gui(ArrayList<YXFunctionWithNameAndRelativePath> functions) {
+	static void gui(ArrayList<YXFunctionWithNameAndRelativePath> functions) {
 		YXFunctionsWithNamesAndRelativePaths = functions;
 		frame = createFrame();
 		frame.pack();
@@ -224,13 +224,16 @@ public class GuiLab3 extends JFrame {
 				JOptionPane.showMessageDialog(frame, new JLabel("Add points"), "Answer",
 						JOptionPane.ERROR_MESSAGE);
 			} else {
-				double[] xCoordinates = new double[table.getRowCount()];
-				double[] yCoordinates = new double[table.getRowCount()];
+				List<Point<Double, Double>> points = new ArrayList<>(table.getRowCount());
+//				double[] xCoordinates = new double[table.getRowCount()];
+//				double[] yCoordinates = new double[table.getRowCount()];
 				for (int i = 0; i < table.getModel().getRowCount(); i++) {
-					xCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 0).toString());
-					yCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 1).toString());
+					points.add(new Point<>(Double.valueOf(table.getModel().getValueAt(i, 0).toString()),
+							Double.valueOf(table.getModel().getValueAt(i, 1).toString())));
+//					xCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 0).toString());
+//					yCoordinates[i] = Double.valueOf(table.getModel().getValueAt(i, 1).toString());
 				}
-				MyGraphic graphic = new MyGraphic("Graphic", xCoordinates, yCoordinates,
+				MyGraphic graphic = new MyGraphic("Graphic", points,
 						selectedFunction.getFunction(), selectedX);
 				graphic.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 

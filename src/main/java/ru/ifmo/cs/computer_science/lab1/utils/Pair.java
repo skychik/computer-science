@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Pair<A, B> implements Serializable {
-	private A first;
-	private B second;
+	private final A first;
+	private final B second;
 
 	public Pair(A first, B second) {
-		super();
 		this.first = first;
 		this.second = second;
 	}
